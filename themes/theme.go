@@ -24,6 +24,7 @@ import (
 	"os"
 	"path"
 	"pkg.deepin.io/dde/api/themes/scanner"
+	xdg "pkg.deepin.io/lib/xdg/basedir"
 )
 
 // Check whether 'theme' in 'list'
@@ -41,12 +42,16 @@ func IsThemeInList(theme string, list []string) bool {
 //
 // Scan '/usr/share/themes' and '$HOME/.themes'
 func ListGtkTheme() []string {
+	sysdirs := []string{}
+	for _, dir := range xdg.GetSystemDataDirs() {
+		sysdirs = append(sysdirs, path.Join(dir, "themes"))
+	}
 	return doListTheme(
 		[]string{
-			path.Join(os.Getenv("HOME"), ".local/share/themes"),
+			path.Join(xdg.GetUserDataDir(), "themes"),
 			path.Join(os.Getenv("HOME"), ".themes"),
 		},
-		[]string{"/usr/share/themes"},
+		sysdirs,
 		scanner.ListGtkTheme)
 }
 
@@ -54,12 +59,16 @@ func ListGtkTheme() []string {
 //
 // Scan '/usr/share/icons' and '$HOME/.icons'
 func ListIconTheme() []string {
+	sysdirs := []string{}
+	for _, dir := range xdg.GetSystemDataDirs() {
+		sysdirs = append(sysdirs, path.Join(dir, "icons"))
+	}
 	return doListTheme(
 		[]string{
-			path.Join(os.Getenv("HOME"), ".local/share/icons"),
+			path.Join(xdg.GetUserDataDir(), "icons"),
 			path.Join(os.Getenv("HOME"), ".icons"),
 		},
-		[]string{"/usr/share/icons"},
+		sysdirs,
 		scanner.ListIconTheme)
 }
 
@@ -67,12 +76,16 @@ func ListIconTheme() []string {
 //
 // Scan '/usr/share/icons' and '$HOME/.icons'
 func ListCursorTheme() []string {
+	sysdirs := []string{}
+	for _, dir := range xdg.GetSystemDataDirs() {
+		sysdirs = append(sysdirs, path.Join(dir, "icons"))
+	}
 	return doListTheme(
 		[]string{
-			path.Join(os.Getenv("HOME"), ".local/share/icons"),
+			path.Join(xdg.GetUserDataDir(), "icons"),
 			path.Join(os.Getenv("HOME"), ".icons"),
 		},
-		[]string{"/usr/share/icons"},
+		sysdirs,
 		scanner.ListCursorTheme)
 }
 

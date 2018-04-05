@@ -27,6 +27,7 @@ import (
 	"path"
 	"pkg.deepin.io/dde/api/themes/scanner"
 	dutils "pkg.deepin.io/lib/utils"
+	xdg "pkg.deepin.io/lib/xdg/basedir"
 )
 
 const (
@@ -188,12 +189,16 @@ func setDefaultCursor(name string) bool {
 }
 
 func getThemePath(name, ty, key string) string {
-	var dirs = []string{
-		path.Join(os.Getenv("HOME"), ".local/share/", key),
-		path.Join(os.Getenv("HOME"), "."+key),
-		path.Join("/usr/local/share", key),
-		path.Join("/usr/share", key),
+	sysdirs := []string{}
+	for _, dir := range xdg.GetSystemDataDirs() {
+		sysdirs = append(sysdirs, path.Join(dir, key))
 	}
+	var dirs = []string{
+		path.Join(xdg.GetUserDataDir(), key),
+		path.Join(os.Getenv("HOME"), "."+key),
+	}
+
+	dirs = append(dirs, sysdirs...)
 
 	for _, dir := range dirs {
 		tmp := path.Join(dir, name)
